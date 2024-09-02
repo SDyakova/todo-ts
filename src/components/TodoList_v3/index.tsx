@@ -1,27 +1,31 @@
-import { useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-
-import { TodoDto } from "./api/types";
-// import { addTask, getTasks } from "./__mock__";
+import React, { useEffect, useState } from "react";
 import { Todo } from "./types";
 import { getAllTodos } from "./api/getAllTodos";
-import { mockGetAllTodos } from "./__mock__";
+import { addNewTodo } from "./api/addNewTodo";
+import Spinner from "./shared/Spinner";
+import styles from "./TodoList.module.scss";
+import TodoCreator from "./components/TodoCreator";
 
-const TodoList = () => {
-  const [tasks, setTasks] = useState<Todo[]>([]);
+const TodoList: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // getAllTodos().then(({ todos }) => setTasks(todos));
-    mockGetAllTodos().then((todos) => setTasks(todos));
+    setLoading(true);
+    getAllTodos().then(({ todos }) => {
+      setTodos(todos);
+      setLoading(false);
+    });
   }, []);
 
   const handleDeleteButtonClick = (id: Todo["id"]) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
   const handleEditButtonClick = (id: Todo["id"]) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === id ? { ...task, isEditing: true } : task))
+    setTodos((prev) =>
+      prev.map((todo) => (todo.id === id ? { ...todo, isEditing: true } : todo))
     );
   };
 
@@ -29,40 +33,45 @@ const TodoList = () => {
     e: React.KeyboardEvent<HTMLInputElement>,
     id: Todo["id"]
   ) => {
-    const inputValue = e.currentTarget.value;
+    const inputValue = e.currentTarget.value.trim();
 
-    if (e.key === "Enter") {
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.id === id
-            ? { ...task, title: inputValue, isEditing: undefined }
-            : task
+    if (e.key === "Enter" && inputValue) {
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === id
+            ? { ...todo, todo: inputValue, isEditing: undefined }
+            : todo
         )
       );
     }
   };
 
   return (
-    <div>
-      {/* <input placeholder="Создать новую задачу" onKeyUp={handleKeyUp} /> */}
+    <div className={styles.wrapper}>
+      <TodoCreator onCreate={setTodos} />
+
       <div>
-        {tasks.map((task) =>
-          !task.isEditing ? (
-            <div key={task.id}>
-              {task.todo}
-              <button onClick={() => handleEditButtonClick(task.id)}>
-                Edit
-              </button>
-              <button onClick={() => handleDeleteButtonClick(task.id)}>
-                Delete
-              </button>
-            </div>
-          ) : (
-            <input
-              key={task.id}
-              onKeyUp={(e) => handleKeyUpWhenEdit(e, task.id)}
-              defaultValue={task.todo}
-            />
+        {loading ? (
+          <Spinner />
+        ) : (
+          todos.map((todo) =>
+            !todo.isEditing ? (
+              <div key={todo.id} className={styles.todo}>
+                {todo.todo}
+                <button onClick={() => handleEditButtonClick(todo.id)}>
+                  Edit
+                </button>
+                <button onClick={() => handleDeleteButtonClick(todo.id)}>
+                  Delete
+                </button>
+              </div>
+            ) : (
+              <input
+                key={todo.id}
+                onKeyUp={(e) => handleKeyUpWhenEdit(e, todo.id)}
+                defaultValue={todo.todo}
+              />
+            )
           )
         )}
       </div>
