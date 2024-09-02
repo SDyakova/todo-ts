@@ -1,0 +1,12 @@
+.wrapper {
+  display: flex;
+  padding: 20px;
+}
+
+.inner {
+  border: 1px solid green;
+  outline: none;
+  &--error {
+    border: 1px solid red;
+  }
+}
