@@ -4,13 +4,14 @@ import styles from "./TodoCreator.module.scss";
 import { addNewTodo } from "../../api/addNewTodo";
 import { Todo } from "../../types";
 import Spinner from "../../shared/Spinner";
+import useStatus from "../../shared/Hook/useState";
 
-type Status = "idle" | "loading" | "success" | "error";
+// type Status = "idle" | "loading" | "success" | "error";
 
 const TodoCreator: React.FC<{
   onCreate: React.Dispatch<React.SetStateAction<Todo[]>>;
 }> = ({ onCreate }) => {
-  const [status, setStatus] = useState<Status>("idle");
+  const [status, setStatus] = useStatus("idle");
 
   const handleKeyUpWhenCreate = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const inputValue = e.currentTarget.value.trim();

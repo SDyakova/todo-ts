@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Todo } from "./types";
 import { getAllTodos } from "./api/getAllTodos";
-import { addNewTodo } from "./api/addNewTodo";
 import Spinner from "./shared/Spinner";
 import styles from "./TodoList.module.scss";
 import TodoCreator from "./components/TodoCreator";
 
 const TodoList: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [error, setError] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [status, setStatus] = useState("idle");
 
   useEffect(() => {
-    setLoading(true);
+    setStatus("loading");
     getAllTodos().then(({ todos }) => {
       setTodos(todos);
-      setLoading(false);
+      setStatus("idle");
     });
   }, []);
 
@@ -51,7 +49,7 @@ const TodoList: React.FC = () => {
       <TodoCreator onCreate={setTodos} />
 
       <div>
-        {loading ? (
+        {status === "loading" ? (
           <Spinner />
         ) : (
           todos.map((todo) =>
