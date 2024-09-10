@@ -5,9 +5,11 @@ import { addNewTodo } from "../../api/addNewTodo";
 import { Status, Todo } from "../../types";
 import Spinner from "../../shared/Spinner";
 
-const TodoCreator: React.FC<{
-  onCreate: React.Dispatch<React.SetStateAction<Todo[]>>;
-}> = ({ onCreate }) => {
+interface TodoCreatorProps {
+  onCreate: (arg: Todo) => void;
+}
+
+const TodoCreator: React.FC<TodoCreatorProps> = ({ onCreate }) => {
   const [status, setStatus] = useState<Status>("idle");
 
   const handleKeyUpWhenCreate = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -16,7 +18,7 @@ const TodoCreator: React.FC<{
       setStatus("loading");
       addNewTodo(inputValue).then((todo) => {
         if (todo) {
-          onCreate((prev) => [...prev, todo]);
+          onCreate(todo);
           setStatus("idle");
         } else {
           setStatus("error");

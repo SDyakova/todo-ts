@@ -44,9 +44,13 @@ const TodoList: React.FC = () => {
     }
   };
 
+  const addNewTodoToList = (todo: Todo) => {
+    setTodos((prev) => [...prev, todo]);
+  };
+
   return (
     <div className={styles.wrapper}>
-      <TodoCreator onCreate={setTodos} />
+      <TodoCreator onCreate={addNewTodoToList} />
       <div>
         {status === "loading" ? (
           <Spinner />
