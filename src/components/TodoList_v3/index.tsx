@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Todo } from "./types";
+import { Status, Todo } from "./types";
 import { getAllTodos } from "./api/getAllTodos";
 import Spinner from "./shared/Spinner";
 import styles from "./TodoList.module.scss";
@@ -7,7 +7,7 @@ import TodoCreator from "./components/TodoCreator";
 
 const TodoList: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState<Status>("idle");
 
   useEffect(() => {
     setStatus("loading");
@@ -47,7 +47,6 @@ const TodoList: React.FC = () => {
   return (
     <div className={styles.wrapper}>
       <TodoCreator onCreate={setTodos} />
-
       <div>
         {status === "loading" ? (
           <Spinner />
